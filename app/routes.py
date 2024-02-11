@@ -3,7 +3,6 @@ from .models import db, User
 from controllers.user import (
     format_user_data,
     format_request_data,
-    get_all_users,
     get_user_by_id,
 )
 import json
@@ -17,7 +16,13 @@ def get_users() -> str:
 
     :returns: str
     """
-    users_list = get_all_users()
+    users_table = User.query.all()
+    users_list = []
+
+    for user in users_table:
+        user_data = format_user_data(user)
+        users_list.append(user_data)
+
     return make_response(jsonify(users_list), 200)
 
 @users_bp.route('/<int:user_id>', methods=['GET'])
