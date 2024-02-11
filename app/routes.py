@@ -45,4 +45,11 @@ def update_user(user_id):
 
 @users_bp.route('/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
-    pass
+    user = User.query.filter_by(id=user_id).first()
+
+    db.session.delete(user)
+    db.session.commit()    
+
+    return make_response(jsonify({
+        'msg': f'User with id {user_id} has been deleted.'
+    }))
