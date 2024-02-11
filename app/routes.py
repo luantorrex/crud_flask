@@ -1,65 +1,88 @@
-from flask import Blueprint, request, jsonify, make_response
+from flask import Blueprint, abort, request, jsonify, make_response
 from .models import db, User
+from controllers.user import (
+    format_user_data,
+    format_request_data,
+    get_all_users,
+    get_user_by_id,
+)
 import json
 
 users_bp = Blueprint('users', __name__)
 
 @users_bp.route('/', methods=['GET'])
-def get_users():
-    users_table = User.query.all()
-    users_list = []
+def get_users() -> str:
+    """
+    Gets every row from the database.
 
-    for user in users_table:
-        user_row = {k: v for k, v in user.__dict__.items() if k != '_sa_instance_state'}
-        users_list.append(user_row)
-
+    :returns: str
+    """
+    users_list = get_all_users()
     return make_response(jsonify(users_list), 200)
 
 @users_bp.route('/<int:user_id>', methods=['GET'])
-def get_user(user_id):
-    user = User.query.filter_by(id=user_id).first()
+def get_user(user_id: int) -> str:
+    """
+    Gets a specific user by its id.
 
-    if not user:
-        return make_response(
-            jsonify({'msg': f'User with id {user_id} not found.'}),
-            404
-        )        
+    :param user_id: Integer to index a user at the database.
 
-    user_row = {k: v for k, v in user.__dict__.items() if k != '_sa_instance_state'}
+    :returns: str
+    """
+    user = get_user_by_id(user_id)
+    user_row = format_user_data(user)
 
     return make_response(jsonify(user_row), 200)
 
 @users_bp.route('/', methods=['POST'])
 def add_user():
-    request_data = json.loads(request.data.decode().replace("'", '"'))
+    """
+    Inserts a new user at the database.
+
+    :returns: str
+    """
+    request_data = format_request_data(request)
+
     user = User(username=request_data['username'], email=request_data['email'])
 
     db.session.add(user)
     db.session.commit()
 
     user = User.query.filter_by(email=request_data['email']).first()
-    user_row = {k: v for k, v in user.__dict__.items() if k != '_sa_instance_state'}
+    user_row = format_user_data(user)
 
     return make_response(jsonify(user_row), 200)
 
 @users_bp.route('/<int:user_id>', methods=['PUT'])
 def update_user(user_id):
-    request_data = json.loads(request.data.decode().replace("'", '"'))
-    user = User.query.filter_by(id=user_id).first()
+    """
+    Update a row at the database.
 
+    :params int user_id: Integer to index a user at the database.
+    :returns: str
+    """
+    request_data = format_request_data(request)
+
+    user = get_user_by_id(user_id)
     user.username = request_data['username']
     user.email = request_data['email']
 
     db.session.commit()
 
-    user = User.query.filter_by(id=user_id).first()
-    user_row = {k: v for k, v in user.__dict__.items() if k != '_sa_instance_state'}
+    user = get_user_by_id(user_id)
+    user_row = format_user_data(user)
 
     return make_response(jsonify(user_row), 200)
 
 @users_bp.route('/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
-    user = User.query.filter_by(id=user_id).first()
+    """
+    Deletes a user at the database.
+    
+    :params int user_id: Integer to index a user at the database.
+    :returns: str
+    """
+    user = get_user_by_id(user_id)
 
     db.session.delete(user)
     db.session.commit()    
@@ -68,10 +91,16 @@ def delete_user(user_id):
         'msg': f'User with id {user_id} has been deleted.'
     }), 200)
 
+@users_bp.app_errorhandler(400)
+def errors_400(e):
+    return make_response(jsonify({
+        'msg': 'Bad Request'
+    }), 400)
+
 @users_bp.app_errorhandler(404)
 def errors_404(e):
     return make_response(jsonify({
-        'msg': 'Error 404'
+        'msg': 'Not Found'
     }), 404)
 
 @users_bp.app_errorhandler(500)
