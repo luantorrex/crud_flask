@@ -13,7 +13,7 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
-    app.register_blueprint(users_bp)
+    app.register_blueprint(users_bp, url_prefix='/users')
 
     if __name__ == '__main__':
         app.run(debug=True)
