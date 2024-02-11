@@ -98,18 +98,27 @@ def delete_user(user_id):
 
 @users_bp.app_errorhandler(400)
 def errors_400(e):
+    """
+    In case of not receiving any obligatory field.
+    """
     return make_response(jsonify({
         'msg': 'Bad Request'
     }), 400)
 
 @users_bp.app_errorhandler(404)
 def errors_404(e):
+    """
+    In case of not finding a specific user.
+    """
     return make_response(jsonify({
         'msg': 'Not Found'
     }), 404)
 
 @users_bp.app_errorhandler(500)
 def errors_500(e):
+    """
+    Internal server error.
+    """
     return make_response(jsonify({
         'msg': 'Internal Server Error'
     }), 500)
