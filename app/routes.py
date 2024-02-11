@@ -10,9 +10,7 @@ def get_users():
     users_list = []
 
     for user in users_table:
-        user_row = user.__dict__
-        user_row.pop('_sa_instance_state')
-
+        user_row = {k: v for k, v in user.__dict__.items() if k != '_sa_instance_state'}
         users_list.append(user_row)
 
     return make_response(jsonify(users_list))
@@ -20,8 +18,7 @@ def get_users():
 @users_bp.route('/<int:user_id>', methods=['GET'])
 def get_user(user_id):
     user = User.query.filter_by(id=user_id).first()
-    user_row = user.__dict__
-    user_row.pop('_sa_instance_state')
+    user_row = {k: v for k, v in user.__dict__.items() if k != '_sa_instance_state'}
 
     return make_response(jsonify(user_row))
 
@@ -34,8 +31,7 @@ def add_user():
     db.session.commit()
 
     user = User.query.filter_by(email=request_data['email']).first()
-    user_row = user.__dict__
-    user_row.pop('_sa_instance_state')
+    user_row = {k: v for k, v in user.__dict__.items() if k != '_sa_instance_state'}
 
     return make_response(jsonify(user_row))
 
@@ -50,8 +46,8 @@ def update_user(user_id):
     db.session.commit()
 
     user = User.query.filter_by(id=user_id).first()
-    user_row = user.__dict__
-    user_row.pop('_sa_instance_state')
+    user_row = {k: v for k, v in user.__dict__.items() if k != '_sa_instance_state'}
+
     return make_response(jsonify(user_row))
 
 @users_bp.route('/<int:user_id>', methods=['DELETE'])
