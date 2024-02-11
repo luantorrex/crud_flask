@@ -41,7 +41,18 @@ def add_user():
 
 @users_bp.route('/<int:user_id>', methods=['PUT'])
 def update_user(user_id):
-    pass
+    request_data = json.loads(request.data.decode().replace("'", '"'))
+    user = User.query.filter_by(id=user_id).first()
+
+    user.username = request_data['username']
+    user.email = request_data['email']
+
+    db.session.commit()
+
+    user = User.query.filter_by(id=user_id).first()
+    user_row = user.__dict__
+    user_row.pop('_sa_instance_state')
+    return make_response(jsonify(user_row))
 
 @users_bp.route('/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
