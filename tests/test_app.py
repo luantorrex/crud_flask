@@ -13,7 +13,7 @@ def test_404_request(client):
 def test_if_database_count_raises_with_a_correct_insert(app, client):
     with app.app_context():
         previous_cont = User.query.count()
-    
+
         response = client.post(
             "/users/",
             data = json.dumps({
@@ -24,8 +24,17 @@ def test_if_database_count_raises_with_a_correct_insert(app, client):
 
         if response.status_code == 200:
             assert User.query.count() > previous_cont
-        else:
-            assert User.query.count() == previous_cont
+
+def test_if_database_cont_changes_with_an_incorrent_insert(app, client):
+    with app.app_context():
+        previous_cont = User.query.count()
+
+        client.post(
+            "/users/incorrect_url",
+            data = json.dumps({'':''})
+        )
+
+        assert User.query.count() == previous_cont
 
 def test_if_a_user_was_correctly_inserted(app, client):
     response = client.post(
