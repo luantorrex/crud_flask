@@ -17,13 +17,9 @@ def get_users() -> str:
     :returns: str
     """
     users_table = User.query.all()
-    users_list = []
+    users_json = [user_.to_json() for user_ in users_table]
 
-    for user in users_table:
-        user_data = format_user_data(user)
-        users_list.append(user_data)
-
-    return make_response(jsonify(users_list), 200)
+    return make_response(jsonify(users_json), 200)
 
 @users_bp.route('/<int:user_id>', methods=['GET'])
 def get_user(user_id: int) -> str:
@@ -35,9 +31,9 @@ def get_user(user_id: int) -> str:
     :returns: str
     """
     user = get_user_by_id(user_id)
-    user_row = format_user_data(user)
+    user_json = user.to_json()
 
-    return make_response(jsonify(user_row), 200)
+    return make_response(jsonify(user_json), 200)
 
 @users_bp.route('/', methods=['POST'])
 def add_user():
@@ -54,9 +50,9 @@ def add_user():
     db.session.commit()
 
     user = User.query.filter_by(email=request_data['email']).first()
-    user_row = format_user_data(user)
+    user_json = user.to_json()
 
-    return make_response(jsonify(user_row), 200)
+    return make_response(jsonify(user_json), 200)
 
 @users_bp.route('/<int:user_id>', methods=['PUT'])
 def update_user(user_id):
@@ -75,9 +71,9 @@ def update_user(user_id):
     db.session.commit()
 
     user = get_user_by_id(user_id)
-    user_row = format_user_data(user)
+    user_json = user.to_json()
 
-    return make_response(jsonify(user_row), 200)
+    return make_response(jsonify(user_json), 200)
 
 @users_bp.route('/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
