@@ -1,10 +1,9 @@
-from flask import Blueprint, abort, request, jsonify, make_response
+from flask import Blueprint, request, jsonify, make_response
 from .models import db, User
 from controllers.user import (
     format_request_data,
     get_user_by_id,
 )
-import json
 
 users_bp = Blueprint('users', __name__)
 
@@ -62,10 +61,13 @@ def update_user(user_id):
     :returns: str
     """
     request_data = format_request_data(request)
-
     user = get_user_by_id(user_id)
-    user.username = request_data['username']
-    user.email = request_data['email']
+
+    if request_data.get('username'):
+        user.username = request_data['username']
+
+    if request_data.get('email'):
+        user.email = request_data['email']
 
     db.session.commit()
 
