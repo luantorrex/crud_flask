@@ -114,33 +114,41 @@ def delete_user(user_id):
     db.session.delete(user)
     db.session.commit()    
 
-    return make_response(jsonify(
-        message=f'User with id {user_id} has been deleted.'
-    ), 200)
+    return make_response(
+        jsonify(
+            message=f'User with id {user_id} has been deleted.'
+        ), 200
+    )
 
 @users_bp.app_errorhandler(400)
 def errors_400(e):
     """
     In case of not receiving any obligatory field.
     """
-    return make_response(jsonify(
-        message='Bad Request.'
-    ), 400)
+    return make_response(
+        jsonify(
+            message='Bad Request.'
+        ), 400
+    )
 
 @users_bp.app_errorhandler(404)
 def errors_404(e):
     """
     In case of not finding a specific user.
     """
-    return make_response(jsonify(
-        message='Not Found.'
-    ), 404)
+    return make_response(
+        jsonify(
+            message='Not Found.'
+        ), 404
+    )
 
 @users_bp.app_errorhandler(500)
 def errors_500(e):
     """
     Internal server error.
     """
-    return make_response(jsonify(
-        message='Internal Server Error.'
-    ), 500)
+    return make_response(
+        jsonify(
+            message='Internal Server Error.'
+        ), 500
+    )
