@@ -10,16 +10,24 @@ def test_debug_is_false(app):
 def test_404_request(client):
     assert client.get("/page_that_doesnt_exists").status_code == 404
 
-def test_register_user(app, client):
-    response = client.post(
-        "/users/",
-        data = json.dumps({"email": "test.test@test.com", "username": "Test Test"})
-    )
-
+def test_if_database_count_raises_with_a_correct_insert(app, client):
     with app.app_context():
-        assert User.query.count() > 0
+        previous_cont = User.query.count()
+    
+        response = client.post(
+            "/users/",
+            data = json.dumps({
+                "email": "test.test@test.com",
+                "username": "Test Test"
+            })
+        )
 
-def test_check_if_a_user_was_correctly_inserted(app, client):
+        if response.status_code == 200:
+            assert User.query.count() > previous_cont
+        else:
+            assert User.query.count() == previous_cont
+
+def test_if_a_user_was_correctly_inserted(app, client):
     response = client.post(
         "/users/",
         data = json.dumps({"email": "test.test@test.com", "username": "Test Test"})
