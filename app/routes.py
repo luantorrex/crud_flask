@@ -1,8 +1,13 @@
-from flask import Blueprint, request, jsonify, make_response
+from flask import (
+    Blueprint,
+    jsonify,
+    make_response,
+    request
+)
 from .models import db, User
 from controllers.user import (
     format_request_data,
-    get_user_by_id,
+    get_user_by_id
 )
 
 users_bp = Blueprint('users', __name__)
