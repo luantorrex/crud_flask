@@ -1,8 +1,17 @@
 import pytest
-from app import create_app
-from app.database import db
+from app import create_app, db
 
-@pytest.fixture(scope="module")
+@pytest.fixture()
 def app():
     """Instance of main app"""
-    return create_app("sqlite://")
+    app = create_app("sqlite://")
+
+    with app.app_context():
+        db.create_all()
+    
+    yield app
+
+@pytest.fixture()
+def client(app):
+    """Client to use at tests"""
+    return app.test_client()
