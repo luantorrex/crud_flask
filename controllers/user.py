@@ -2,16 +2,6 @@ from app.models import db, User
 from flask import abort, Request
 import json
 
-def format_user_data(user: User) -> dict:
-    """
-    Formats user data
-
-    :param User user: User object
-
-    :returns: dict
-    """
-    return {k: v for k, v in user.__dict__.items() if k != '_sa_instance_state'}
-
 def get_user_by_id(user_id:int) -> User:
     """
     Gets a specific user by its id. If not found, raises 404 status code.

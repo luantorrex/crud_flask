@@ -1,7 +1,6 @@
 from flask import Blueprint, abort, request, jsonify, make_response
 from .models import db, User
 from controllers.user import (
-    format_user_data,
     format_request_data,
     get_user_by_id,
 )
