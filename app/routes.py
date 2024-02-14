@@ -57,7 +57,24 @@ def add_user():
     """
     request_data = format_request_data(request)
 
+    obligatory_fields = ['username', 'email']
+
+    for obligatory_field in obligatory_fields:
+        if not request_data.get(obligatory_field):
+            return make_response(
+                jsonify(
+                    message=f'{obligatory_field} is an obligatory field, please provide it.'
+                ), 400
+            )
+
     user = User(username=request_data['username'], email=request_data['email'])
+
+    if User.query.filter_by(email=user.email).first():
+        return make_response(
+            jsonify(
+                message='User already exists at database.'
+            ), 400
+        )
 
     db.session.add(user)
     db.session.commit()
