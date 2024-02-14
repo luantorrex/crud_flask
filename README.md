@@ -16,6 +16,7 @@ Para os testes foi utilizado o framework **pytest**.
 5. `DELETE /users/{id}`: Remove um usuário.
 
 **Rodar a aplicação**:
-1. `. venv/bin/activate`: Ativar a virtualenv. 
-2. `pip install -r requirements.txt`: Instalar as dependências. 
-3. `. run.sh`: Rodar o shell_script que seta as variáveis de ambiente e chama o flask run. 
+1. `git clone <esse repositório>`: Clonar repositório.
+2. `. venv/bin/activate`: Ativar a virtualenv. 
+3. `pip install -r requirements.txt`: Instalar as dependências. 
+4. `. run.sh`: Rodar o shell_script que seta as variáveis de ambiente e chama o flask run. 
