@@ -100,6 +100,15 @@ def update_user(user_id):
     request_data = format_request_data(request)
     user = get_user_by_id(user_id)
 
+    if not request_data.get('username') and not request_data.get('email'):
+        obligatory_fields = ', '.join(['username', 'email'])
+        
+        return make_response(
+                jsonify(
+                    message=f'Please provide at last one of the following fields: {obligatory_fields}.'
+                ), 400
+            )
+
     if request_data.get('username'):
         user.username = request_data['username']
 
